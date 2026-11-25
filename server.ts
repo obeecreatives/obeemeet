@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -14,6 +15,7 @@ const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
+  const httpServer = http.createServer(app);
   const PORT = Number(process.env.PORT || 3000);
 
   app.use(express.json({ limit: '64kb' }));
@@ -47,7 +49,10 @@ async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: process.env.DISABLE_HMR === 'true' ? false : { server: httpServer },
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
@@ -59,7 +64,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`ObeeMeet server running on http://0.0.0.0:${PORT}`);
   });
 }
