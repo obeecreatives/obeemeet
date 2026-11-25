@@ -144,7 +144,7 @@ export function PreJoinLobby({
 
   return (
     <div className="min-h-dvh bg-[#0B1120] text-slate-100">
-      <header className="pt-safe border-b border-slate-800/80">
+      <header className="sticky top-0 z-30 pt-safe border-b border-slate-800/80 bg-[#0B1120]/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3.5 sm:gap-4 sm:px-6 sm:py-4">
           <div className="flex items-center gap-4">
             <button
