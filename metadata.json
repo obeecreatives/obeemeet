@@ -1,0 +1,6 @@
+{
+  "name": "ObeeMeet — Video Meeting Pelatihan Online",
+  "description": "Aplikasi web video meeting tanpa batas durasi khusus pelatihan online oleh obeecreatives, dilengkapi Presentation Layout, Companion Link Papan Tulis, Antrean Angkat Tangan, dan Rekap Absensi CSV.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
