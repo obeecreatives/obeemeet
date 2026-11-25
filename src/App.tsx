@@ -6,6 +6,7 @@
 import { useEffect, useState } from 'react';
 import { LandingPage } from './components/LandingPage';
 import { MeetingRoom } from './components/MeetingRoom';
+import { OfflineIndicator } from './components/OfflineIndicator';
 import { PreJoinLobby } from './components/PreJoinLobby';
 import { SetupGuideModal } from './components/SetupGuideModal';
 import type {
@@ -255,6 +256,8 @@ export default function App() {
         livekitHost={health.livekitHost}
         onClose={() => setIsSetupGuideOpen(false)}
       />
+
+      <OfflineIndicator />
     </>
   );
 }

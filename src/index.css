@@ -10,6 +10,12 @@
   html {
     font-family: var(--font-sans);
     color-scheme: dark;
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    overscroll-behavior: none;
   }
 
   h1, h2, h3, h4 {
@@ -19,6 +25,37 @@
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* iOS Notch / Dynamic Island / Home Indicator Safe Area utilities */
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pl-safe {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+.pr-safe {
+  padding-right: env(safe-area-inset-right, 0px);
+}
+.px-safe {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* Compact header & footer chrome when smartphone rotates to landscape (auto-rotate) */
+@media (max-height: 500px) and (orientation: landscape) {
+  .landscape-compact-header {
+    height: 2.75rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  .landscape-compact-footer {
+    padding-top: 0.375rem;
+    padding-bottom: max(0.375rem, env(safe-area-inset-bottom, 0px));
+  }
 }
 
 /* Subtle dark scrollbar for chat & participant lists */

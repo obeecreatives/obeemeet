@@ -170,7 +170,7 @@ export function SidePanel({
   return (
     <aside
       aria-label="Panel Samping Kelas"
-      className="fixed inset-y-0 right-0 z-40 flex w-full max-w-[360px] flex-col border-l border-slate-800 bg-[#11192B] shadow-2xl lg:static lg:z-auto lg:w-[350px] lg:shrink-0 lg:shadow-none"
+      className="fixed inset-y-0 right-0 z-40 flex w-full max-w-[360px] flex-col border-l border-slate-800 bg-[#11192B] pt-safe pb-safe pr-safe shadow-2xl lg:static lg:z-auto lg:w-[350px] lg:shrink-0 lg:pt-0 lg:pb-0 lg:pr-0 lg:shadow-none"
     >
       {/* Panel Tab Navigation */}
       <div className="flex items-center justify-between border-b border-slate-800 px-3 py-2.5">
@@ -221,7 +221,7 @@ export function SidePanel({
           type="button"
           onClick={onClose}
           aria-label="Tutup panel samping"
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-800 hover:text-white lg:h-8 lg:w-8"
         >
           <X className="h-4 w-4" />
         </button>

@@ -26,6 +26,7 @@ import {
   UserPlus,
   Users,
   Video,
+  Volume2,
 } from 'lucide-react';
 import { useMeetingSession } from '../hooks/useMeetingSession';
 import type { ActiveSessionConfig, ReactionEmoji, SidePanelTab } from '../types/meeting';
@@ -33,6 +34,7 @@ import { downloadAttendanceCsv, formatDurationHMS } from '../utils/attendanceCsv
 import { CompanionDrawer } from './CompanionDrawer';
 import { DeviceSettingsModal } from './DeviceSettingsModal';
 import { InviteModal } from './InviteModal';
+import { PWAInstallButton } from './PWAInstallButton';
 import { SidePanel } from './SidePanel';
 import { VideoTile } from './VideoTile';
 
@@ -201,7 +203,7 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-[#0B1120] text-slate-100">
       {/* TOP BAR: Room Info, Lock Status, Preview Indicator, Elapsed Timer & Invite */}
-      <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-slate-800/90 bg-[#0F172A] px-3 sm:px-5">
+      <header className="pt-safe px-safe landscape-compact-header flex h-14 shrink-0 items-center justify-between gap-2 border-b border-slate-800/90 bg-[#0F172A] px-3 sm:gap-3 sm:px-5">
         <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-600 text-white">
             <Video className="h-4 w-4" />
@@ -322,6 +324,23 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
         </div>
       )}
 
+      {/* iOS Safari Audio Autoplay Unlock Banner */}
+      {meeting.audioPlaybackBlocked && (
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-teal-500/40 bg-teal-600/20 px-4 py-2.5 text-xs text-teal-100">
+          <div className="flex items-center gap-2">
+            <Volume2 className="h-4 w-4 shrink-0 text-teal-300" />
+            <span>Browser iOS/Safari menjeda suara kelas otomatis. Ketuk tombol di samping untuk mengaktifkan audio.</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => void meeting.unlockAudio()}
+            className="min-h-[36px] shrink-0 rounded-lg bg-teal-500 px-3 py-1.5 text-xs font-bold text-slate-950 transition-colors hover:bg-teal-400 whitespace-nowrap"
+          >
+            Aktifkan Suara
+          </button>
+        </div>
+      )}
+
       {/* Connection error or reconnecting banner */}
       {(meeting.errorMessage || meeting.connectionState === 'reconnecting') && (
         <div className="flex shrink-0 items-center justify-center gap-2 border-b border-amber-500/30 bg-amber-500/15 px-4 py-2 text-xs text-amber-200">
@@ -335,12 +354,12 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
       {/* MAIN WORKSPACE: Video Stage + Optional Companion Drawer + Optional Side Panel */}
       <div className="relative flex min-h-0 flex-1 overflow-hidden">
         {/* Video Stage */}
-        <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden p-3 sm:p-4">
-          {/* Smart Layout Mode 1: Presentation Layout (75-80% Screen Share + Filmstrip) */}
+        <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden p-2.5 sm:p-4">
+          {/* Smart Layout Mode 1: Presentation Layout (75-80% Screen Share + Auto-Rotate Filmstrip) */}
           {activeScreenSharer ? (
-            <div className="flex h-full flex-col gap-3 lg:flex-row">
-              {/* Filmstrip on top for mobile/tablet, on right for desktop */}
-              <div className="order-2 flex-1 min-h-0 lg:order-1">
+            <div className="flex h-full flex-col gap-2.5 landscape:flex-row md:flex-row sm:gap-3">
+              {/* Filmstrip on top for mobile portrait, on right for landscape phone / tablet / desktop */}
+              <div className="order-2 flex-1 min-h-0 landscape:order-1 md:order-1">
                 <VideoTile
                   participant={activeScreenSharer}
                   mode="screen"
@@ -348,9 +367,9 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
                 />
               </div>
 
-              <div className="order-1 flex shrink-0 gap-2.5 overflow-x-auto pb-1 lg:order-2 lg:w-56 xl:w-64 lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden lg:pb-0">
+              <div className="order-1 flex shrink-0 gap-2 overflow-x-auto pb-1 landscape:order-2 landscape:w-36 landscape:flex-col landscape:overflow-y-auto landscape:overflow-x-hidden landscape:pb-0 md:order-2 md:w-48 md:flex-col md:overflow-y-auto md:overflow-x-hidden md:pb-0 lg:w-56 xl:w-64">
                 {filmstripParticipants.map((p) => (
-                  <div key={p.identity} className="w-40 shrink-0 lg:w-full">
+                  <div key={p.identity} className="w-36 shrink-0 landscape:w-full md:w-full">
                     <VideoTile
                       participant={p}
                       compact
@@ -366,9 +385,9 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
               </div>
             </div>
           ) : spotlightParticipant ? (
-            /* Smart Layout Mode 2: Global Spotlight Layout */
-            <div className="flex h-full flex-col gap-3 lg:flex-row">
-              <div className="order-2 flex-1 min-h-0 lg:order-1">
+            /* Smart Layout Mode 2: Global Spotlight Layout (Auto-Rotate Aware) */
+            <div className="flex h-full flex-col gap-2.5 landscape:flex-row md:flex-row sm:gap-3">
+              <div className="order-2 flex-1 min-h-0 landscape:order-1 md:order-1">
                 <VideoTile
                   participant={spotlightParticipant}
                   isSpotlight
@@ -381,9 +400,9 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
               </div>
 
               {filmstripParticipants.length > 0 && (
-                <div className="order-1 flex shrink-0 gap-2.5 overflow-x-auto pb-1 lg:order-2 lg:w-56 xl:w-64 lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden lg:pb-0">
+                <div className="order-1 flex shrink-0 gap-2 overflow-x-auto pb-1 landscape:order-2 landscape:w-36 landscape:flex-col landscape:overflow-y-auto landscape:overflow-x-hidden landscape:pb-0 md:order-2 md:w-48 md:flex-col md:overflow-y-auto md:overflow-x-hidden md:pb-0 lg:w-56 xl:w-64">
                   {filmstripParticipants.map((p) => (
-                    <div key={p.identity} className="w-40 shrink-0 lg:w-full">
+                    <div key={p.identity} className="w-36 shrink-0 landscape:w-full md:w-full">
                       <VideoTile
                         participant={p}
                         compact
@@ -472,16 +491,16 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
         />
       </div>
 
-      {/* BOTTOM CONTROL BAR: Auto-tidy, touch-friendly (>= 44px), never overlapping on mobile */}
-      <footer className="relative z-30 shrink-0 border-t border-slate-800/90 bg-[#0F172A] px-2.5 py-2.5 sm:px-5">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2">
+      {/* BOTTOM CONTROL BAR: Auto-tidy, touch-friendly (>= 44px), safe-area & zero overlap on 360px phones */}
+      <footer className="pb-safe px-safe landscape-compact-footer relative z-30 shrink-0 border-t border-slate-800/90 bg-[#0F172A] px-2 py-2 sm:px-5 sm:py-2.5">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-1.5 sm:gap-2">
           {/* Left: Primary Media Controls */}
           <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               type="button"
               onClick={() => void meeting.toggleMic()}
               aria-label={meeting.isLocalMicOn ? 'Bisukan mikrofon' : 'Nyalakan mikrofon'}
-              className={`flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl px-3 text-xs font-semibold transition-colors whitespace-nowrap ${
+              className={`flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl px-2.5 text-xs font-semibold transition-colors sm:px-3 whitespace-nowrap ${
                 meeting.isLocalMicOn
                   ? 'border border-slate-700/80 bg-slate-800/90 text-slate-100 hover:bg-slate-700'
                   : 'bg-red-600 text-white hover:bg-red-500'
@@ -495,7 +514,7 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
               type="button"
               onClick={() => void meeting.toggleCamera()}
               aria-label={meeting.isLocalCameraOn ? 'Matikan kamera' : 'Nyalakan kamera'}
-              className={`flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl px-3 text-xs font-semibold transition-colors whitespace-nowrap ${
+              className={`flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl px-2.5 text-xs font-semibold transition-colors sm:px-3 whitespace-nowrap ${
                 meeting.isLocalCameraOn
                   ? 'border border-slate-700/80 bg-slate-800/90 text-slate-100 hover:bg-slate-700'
                   : 'bg-red-600 text-white hover:bg-red-500'
@@ -505,8 +524,8 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
               <span className="hidden md:inline">{meeting.isLocalCameraOn ? 'Kamera' : 'Mati'}</span>
             </button>
 
-            {/* Share Screen Button + Sharp Text/Whiteboard Quality Popover */}
-            <div className="relative">
+            {/* Share Screen Button (Desktop / Tablet / Landscape; neatly inside mobile menu on narrow portrait phones) */}
+            <div className="relative hidden sm:block">
               {meeting.isLocalScreenSharing ? (
                 <button
                   type="button"
@@ -514,12 +533,16 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
                   className="flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl bg-teal-600 px-3 text-xs font-semibold text-white transition-colors hover:bg-teal-500 whitespace-nowrap"
                 >
                   <MonitorOff className="h-4 w-4" />
-                  <span className="hidden sm:inline">Hentikan Share</span>
+                  <span className="hidden md:inline">Hentikan Share</span>
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={() => {
+                    if (!meeting.canScreenShare) {
+                      setIsShareMenuOpen(true);
+                      return;
+                    }
                     setIsShareMenuOpen((v) => !v);
                     setIsReactionMenuOpen(false);
                     setIsMobileMoreOpen(false);
@@ -528,55 +551,67 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
                   className="flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl border border-slate-700/80 bg-slate-800/90 px-3 text-xs font-semibold text-slate-100 transition-colors hover:border-teal-500/60 hover:bg-slate-800 whitespace-nowrap"
                 >
                   <MonitorUp className="h-4 w-4 text-teal-400" />
-                  <span className="hidden sm:inline">Share Screen</span>
+                  <span className="hidden md:inline">Share Screen</span>
                 </button>
               )}
 
               {isShareMenuOpen && !meeting.isLocalScreenSharing && (
                 <div className="absolute bottom-14 left-0 z-50 w-72 rounded-xl border border-slate-700 bg-[#131C2E] p-2 shadow-2xl">
-                  <p className="px-2.5 py-1.5 text-[11px] font-semibold text-slate-400">
-                    Pilih Kualitas Share Screen
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsShareMenuOpen(false);
-                      void meeting.startScreenShare('whiteboard', false);
-                    }}
-                    className="w-full rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-slate-800"
-                  >
-                    <p className="text-xs font-semibold text-teal-300">Teks & Papan Tulis Tajam (Disarankan)</p>
-                    <p className="mt-0.5 text-[11px] text-slate-400">
-                      1080p · detail tinggi untuk tulisan & diagram papan tulis.
-                    </p>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsShareMenuOpen(false);
-                      void meeting.startScreenShare('motion', false);
-                    }}
-                    className="mt-1 w-full rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-slate-800"
-                  >
-                    <p className="text-xs font-semibold text-slate-100">Video & Gerakan Halus</p>
-                    <p className="mt-0.5 text-[11px] text-slate-400">
-                      30 fps untuk memutar video demo atau animasi.
-                    </p>
-                  </button>
-                  {session.mode === 'preview' && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsShareMenuOpen(false);
-                        void meeting.startScreenShare('whiteboard', true);
-                      }}
-                      className="mt-1 w-full rounded-lg border-t border-slate-800 px-2.5 py-2 text-left transition-colors hover:bg-slate-800"
-                    >
-                      <p className="text-xs font-semibold text-slate-200">Simulasi Slide Papan Tulis</p>
-                      <p className="mt-0.5 text-[11px] text-slate-400">
-                        Uji Presentation Layout 80% tanpa membagikan layar perangkat.
+                  {!meeting.canScreenShare ? (
+                    <div className="p-2.5 text-xs leading-relaxed text-slate-300">
+                      <p className="font-semibold text-slate-100">Berbagi Layar Tidak Didukung di Browser HP Ini</p>
+                      <p className="mt-1 text-slate-400">
+                        Browser mobile (terutama iOS Safari) membatasi Share Screen. Gunakan Laptop/PC untuk berbagi
+                        layar materi atau papan tulis.
                       </p>
-                    </button>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="px-2.5 py-1.5 text-[11px] font-semibold text-slate-400">
+                        Pilih Kualitas Share Screen
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsShareMenuOpen(false);
+                          void meeting.startScreenShare('whiteboard', false);
+                        }}
+                        className="w-full rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-slate-800"
+                      >
+                        <p className="text-xs font-semibold text-teal-300">Teks & Papan Tulis Tajam (Disarankan)</p>
+                        <p className="mt-0.5 text-[11px] text-slate-400">
+                          1080p · detail tinggi untuk tulisan & diagram papan tulis.
+                        </p>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsShareMenuOpen(false);
+                          void meeting.startScreenShare('motion', false);
+                        }}
+                        className="mt-1 w-full rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-slate-800"
+                      >
+                        <p className="text-xs font-semibold text-slate-100">Video & Gerakan Halus</p>
+                        <p className="mt-0.5 text-[11px] text-slate-400">
+                          30 fps untuk memutar video demo atau animasi.
+                        </p>
+                      </button>
+                      {session.mode === 'preview' && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsShareMenuOpen(false);
+                            void meeting.startScreenShare('whiteboard', true);
+                          }}
+                          className="mt-1 w-full rounded-lg border-t border-slate-800 px-2.5 py-2 text-left transition-colors hover:bg-slate-800"
+                        >
+                          <p className="text-xs font-semibold text-slate-200">Simulasi Slide Papan Tulis</p>
+                          <p className="mt-0.5 text-[11px] text-slate-400">
+                            Uji Presentation Layout 80% tanpa membagikan layar perangkat.
+                          </p>
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               )}
@@ -590,7 +625,7 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
               type="button"
               onClick={() => void meeting.toggleRaiseHand()}
               aria-label={meeting.isLocalHandRaised ? 'Turunkan tangan' : 'Angkat tangan'}
-              className={`flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl px-3 text-xs font-semibold transition-colors whitespace-nowrap ${
+              className={`flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl px-2.5 text-xs font-semibold transition-colors sm:px-3 whitespace-nowrap ${
                 meeting.isLocalHandRaised
                   ? 'bg-amber-500 text-slate-950 hover:bg-amber-400'
                   : 'border border-slate-700/80 bg-slate-800/90 text-slate-100 hover:bg-slate-700'
@@ -602,8 +637,8 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
               </span>
             </button>
 
-            {/* Quick Reactions (👍 👏 ❓) */}
-            <div className="relative">
+            {/* Quick Reactions (👍 👏 ❓) — visible on sm+, also inside mobile Lainnya menu */}
+            <div className="relative hidden sm:block">
               <button
                 type="button"
                 onClick={() => {
@@ -643,7 +678,7 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
               type="button"
               onClick={() => toggleSideTab('chat')}
               aria-label="Buka chat kelas"
-              className={`relative flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl px-3 text-xs font-semibold transition-colors whitespace-nowrap ${
+              className={`relative flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl px-2.5 text-xs font-semibold transition-colors sm:px-3 whitespace-nowrap ${
                 activeSideTab === 'chat'
                   ? 'bg-teal-600/25 border border-teal-500/60 text-teal-200'
                   : 'border border-slate-700/80 bg-slate-800/90 text-slate-100 hover:bg-slate-700'
@@ -663,7 +698,7 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
               type="button"
               onClick={() => toggleSideTab('participants')}
               aria-label="Buka daftar peserta"
-              className={`relative flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl px-3 text-xs font-semibold transition-colors whitespace-nowrap ${
+              className={`relative flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl px-2.5 text-xs font-semibold transition-colors sm:px-3 whitespace-nowrap ${
                 activeSideTab === 'participants'
                   ? 'bg-teal-600/25 border border-teal-500/60 text-teal-200'
                   : 'border border-slate-700/80 bg-slate-800/90 text-slate-100 hover:bg-slate-700'
@@ -678,7 +713,7 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
               )}
             </button>
 
-            {/* Host Room & Whiteboard Controls (Desktop) */}
+            {/* Host Room & Whiteboard Controls (Desktop / Tablet) */}
             {isHost && (
               <button
                 type="button"
@@ -695,7 +730,7 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
               </button>
             )}
 
-            {/* Device Settings (Audio Interface / External Camera) — Desktop */}
+            {/* Device Settings (Audio Interface / External Camera) — Desktop / Tablet */}
             <button
               type="button"
               onClick={() => {
@@ -711,7 +746,7 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
               <span className="hidden xl:inline">Perangkat</span>
             </button>
 
-            {/* Mobile Overflow Menu for Invite, Device Settings & Host Controls */}
+            {/* Mobile Overflow Menu (Portrait Phone: Reactions, Share Screen, Audio/Cam Settings, Invite, Host Controls, Install) */}
             <div className="relative sm:hidden">
               <button
                 type="button"
@@ -727,7 +762,47 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
               </button>
 
               {isMobileMoreOpen && (
-                <div className="absolute right-0 bottom-14 z-50 w-56 rounded-xl border border-slate-700 bg-[#131C2E] p-1.5 shadow-2xl">
+                <div className="absolute right-0 bottom-14 z-50 w-60 rounded-xl border border-slate-700 bg-[#131C2E] p-2 shadow-2xl">
+                  {/* Quick Reactions row inside mobile drawer */}
+                  <div className="mb-1.5 flex items-center justify-around rounded-lg bg-[#0B1120] p-1">
+                    {REACTION_CHOICES.map((item) => (
+                      <button
+                        key={item.emoji}
+                        type="button"
+                        title={item.label}
+                        onClick={() => {
+                          void meeting.sendReaction(item.emoji);
+                          setIsMobileMoreOpen(false);
+                        }}
+                        className="flex h-10 w-12 items-center justify-center rounded-md text-lg hover:bg-slate-800"
+                      >
+                        {item.emoji}
+                      </button>
+                    ))}
+                  </div>
+
+                  {meeting.canScreenShare && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMobileMoreOpen(false);
+                        if (meeting.isLocalScreenSharing) {
+                          void meeting.stopScreenShare();
+                        } else {
+                          void meeting.startScreenShare('whiteboard', session.mode === 'preview');
+                        }
+                      }}
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-xs font-medium text-slate-100 hover:bg-slate-800"
+                    >
+                      {meeting.isLocalScreenSharing ? (
+                        <MonitorOff className="h-4 w-4 text-teal-400" />
+                      ) : (
+                        <MonitorUp className="h-4 w-4 text-teal-400" />
+                      )}
+                      <span>{meeting.isLocalScreenSharing ? 'Hentikan Share Screen' : 'Share Screen'}</span>
+                    </button>
+                  )}
+
                   <button
                     type="button"
                     onClick={() => {
@@ -739,6 +814,7 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
                     <Settings className="h-4 w-4 text-teal-400" />
                     <span>Pengaturan Audio & Kamera</span>
                   </button>
+
                   <button
                     type="button"
                     onClick={() => {
@@ -748,8 +824,9 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
                     className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-xs font-medium text-slate-100 hover:bg-slate-800"
                   >
                     <UserPlus className="h-4 w-4 text-teal-400" />
-                    <span>Undang & Info Ruang</span>
+                    <span>Undang & QR Code</span>
                   </button>
+
                   {isHost && (
                     <button
                       type="button"
@@ -760,6 +837,10 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
                       <span>Papan Tulis & Kontrol Ruang</span>
                     </button>
                   )}
+
+                  <div className="mt-1 border-t border-slate-800 pt-1">
+                    <PWAInstallButton variant="menu-item" onActionTaken={() => setIsMobileMoreOpen(false)} />
+                  </div>
                 </div>
               )}
             </div>
@@ -777,7 +858,7 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
                 }
               }}
               aria-label={isHost ? 'Keluar atau akhiri kelas' : 'Keluar dari kelas'}
-              className="flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl bg-red-600 px-3.5 text-xs font-semibold text-white transition-colors hover:bg-red-500 whitespace-nowrap"
+              className="flex h-11 min-w-[44px] items-center justify-center gap-2 rounded-xl bg-red-600 px-2.5 text-xs font-semibold text-white transition-colors hover:bg-red-500 sm:px-3.5 whitespace-nowrap"
             >
               <PhoneOff className="h-4 w-4" />
               <span className="hidden sm:inline">{isHost ? 'Akhiri' : 'Keluar'}</span>

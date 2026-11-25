@@ -23,7 +23,7 @@ export function CompanionDrawer({ link, onClose }: CompanionDrawerProps) {
   return (
     <aside
       aria-label="Panel Papan Tulis Pendamping"
-      className="flex h-full w-full flex-col border-l border-slate-800 bg-[#0F172A] lg:w-[44%] lg:min-w-[380px] lg:max-w-[680px]"
+      className="fixed inset-0 z-40 flex h-full w-full flex-col border-l border-slate-800 bg-[#0F172A] pt-safe pb-safe md:static md:z-auto md:w-[46%] md:min-w-[340px] md:max-w-[680px] md:pt-0 md:pb-0 lg:w-[44%]"
     >
       <div className="flex items-center justify-between gap-2 border-b border-slate-800 bg-[#131C2E] px-4 py-2.5">
         <div className="flex min-w-0 items-center gap-2">

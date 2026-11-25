@@ -59,6 +59,7 @@ export function DeviceSettingsModal({
         (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
+      void ctx.resume().catch(() => {});
       const source = ctx.createMediaStreamSource(localMicStream);
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 256;
@@ -123,6 +124,7 @@ export function DeviceSettingsModal({
         (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
+      await ctx.resume().catch(() => {});
       const sinkAwareCtx = ctx as AudioContext & { setSinkId?: (id: string) => Promise<void> };
       if (settings.audioOutputId && typeof sinkAwareCtx.setSinkId === 'function') {
         await sinkAwareCtx.setSinkId(settings.audioOutputId).catch(() => {});
@@ -321,8 +323,8 @@ export function DeviceSettingsModal({
               </select>
             ) : (
               <p className="mt-1.5 rounded-lg border border-slate-800 bg-[#0B1120] px-3 py-2 text-xs text-slate-400">
-                Browser ini mengikuti output speaker default sistem operasi (gunakan Chrome/Edge desktop untuk memilih
-                output headphone soundcard langsung dari aplikasi).
+                Pada iOS/Safari, jalur output speaker/earphone diatur otomatis melalui Control Center, AirPlay, atau
+                perangkat Bluetooth. Di Chrome/Edge desktop, output headphone soundcard dapat dipilih langsung di sini.
               </p>
             )}
           </div>

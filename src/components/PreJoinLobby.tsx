@@ -144,8 +144,8 @@ export function PreJoinLobby({
 
   return (
     <div className="min-h-dvh bg-[#0B1120] text-slate-100">
-      <header className="border-b border-slate-800/80 px-6 py-4">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
+      <header className="pt-safe border-b border-slate-800/80 px-4 py-3.5 sm:px-6 sm:py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-4">
             <button
               type="button"
@@ -177,10 +177,10 @@ export function PreJoinLobby({
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 py-8 lg:py-12">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start">
+      <main className="pb-safe mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8 lg:py-12">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-12 md:items-start lg:gap-8">
           {/* Left: Camera Preview & Device Checks */}
-          <div className="space-y-4 lg:col-span-7">
+          <div className="space-y-4 md:col-span-7">
             <div className="relative aspect-video overflow-hidden rounded-2xl border border-slate-800 bg-[#11192B]">
               {isCameraOn && stream && stream.getVideoTracks().length > 0 ? (
                 <video
@@ -427,7 +427,7 @@ export function PreJoinLobby({
           </div>
 
           {/* Right: Participant Info & Host Identity */}
-          <div className="rounded-2xl border border-slate-800 bg-[#131C2E] p-6 lg:col-span-5">
+          <div className="rounded-2xl border border-slate-800 bg-[#131C2E] p-5 sm:p-6 md:col-span-5">
             <div className="flex items-center justify-between gap-2">
               <span className="font-mono text-sm font-semibold text-teal-300 tabular-nums">{config.roomCode}</span>
               {isHostBadgeVisible && (

@@ -238,6 +238,9 @@ export interface UseMeetingSessionReturn {
   audioOutputDevices: MediaDeviceOption[];
   videoInputDevices: MediaDeviceOption[];
   localMicStream: MediaStream | null;
+  audioPlaybackBlocked: boolean;
+  canScreenShare: boolean;
+  unlockAudio: () => Promise<void>;
   updateDeviceSettings: (partial: Partial<DeviceSettingsState>) => Promise<void>;
   refreshDevices: () => Promise<void>;
   triggerPreviewRaiseHand?: () => void;
@@ -267,6 +270,12 @@ export function useMeetingSession(session: ActiveSessionConfig): UseMeetingSessi
   const [audioInputDevices, setAudioInputDevices] = useState<MediaDeviceOption[]>([]);
   const [audioOutputDevices, setAudioOutputDevices] = useState<MediaDeviceOption[]>([]);
   const [videoInputDevices, setVideoInputDevices] = useState<MediaDeviceOption[]>([]);
+  const [audioPlaybackBlocked, setAudioPlaybackBlocked] = useState(false);
+
+  const canScreenShare =
+    session.mode === 'preview' ||
+    (typeof navigator !== 'undefined' &&
+      Boolean(navigator.mediaDevices && typeof navigator.mediaDevices.getDisplayMedia === 'function'));
   const [handRaisedMap, setHandRaisedMap] = useState<Record<string, number>>(() => {
     if (session.mode !== 'preview') return {};
     const now = Date.now();
@@ -591,12 +600,16 @@ export function useMeetingSession(session: ActiveSessionConfig): UseMeetingSessi
       .on(RoomEvent.Connected, () => {
         if (cancelled) return;
         setConnectionState('connected');
+        setAudioPlaybackBlocked(!room.canPlaybackAudio);
         applyRoomMetadata(room.metadata);
         room.remoteParticipants.forEach((rp) => {
           const info = parseParticipantRole(rp);
           upsertAttendanceJoin(rp.identity, rp.name || rp.identity, info.role);
         });
         bump();
+      })
+      .on(RoomEvent.AudioPlaybackStatusChanged, () => {
+        setAudioPlaybackBlocked(!room.canPlaybackAudio);
       })
       .on(RoomEvent.Reconnecting, () => setConnectionState('reconnecting'))
       .on(RoomEvent.Reconnected, () => {
@@ -1366,6 +1379,23 @@ export function useMeetingSession(session: ActiveSessionConfig): UseMeetingSessi
     return new MediaStream([micTrack]);
   }, [lkRevision, localPreviewStream, session.mode]);
 
+  const unlockAudio = useCallback(async () => {
+    const room = roomRef.current;
+    if (!room) {
+      setAudioPlaybackBlocked(false);
+      return;
+    }
+    try {
+      await room.startAudio();
+      setAudioPlaybackBlocked(!room.canPlaybackAudio);
+      if (room.canPlaybackAudio) {
+        showToast('Audio ruang kelas telah diaktifkan.');
+      }
+    } catch {
+      showToast('Ketuk sekali lagi untuk mengaktifkan suara di perangkat iOS/Safari.');
+    }
+  }, [showToast]);
+
   return {
     participants,
     roomMetadata,
@@ -1402,6 +1432,9 @@ export function useMeetingSession(session: ActiveSessionConfig): UseMeetingSessi
     audioOutputDevices,
     videoInputDevices,
     localMicStream,
+    audioPlaybackBlocked,
+    canScreenShare,
+    unlockAudio,
     updateDeviceSettings,
     refreshDevices,
     triggerPreviewRaiseHand: session.mode === 'preview' ? triggerPreviewRaiseHand : undefined,

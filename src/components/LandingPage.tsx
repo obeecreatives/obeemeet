@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import type { HealthStatus } from '../types/meeting';
 import { extractRoomCodeFromInput } from '../utils/urlSafety';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface LandingPageProps {
   health: HealthStatus;
@@ -52,8 +53,8 @@ export function LandingPage({
   return (
     <div className="min-h-dvh bg-[#0B1120] text-slate-100">
       {/* Top Bar Contract: Single-line Wordmark — Concise Nav Links — 1 Primary Action */}
-      <header className="border-b border-slate-800/80 bg-[#0B1120]/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-8 px-6 py-4">
+      <header className="pt-safe border-b border-slate-800/80 bg-[#0B1120]/90 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 sm:gap-8 sm:px-6 sm:py-4">
           <a
             href="/"
             onClick={(e) => {
@@ -97,7 +98,7 @@ export function LandingPage({
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-12 lg:py-16">
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:py-16">
         {/* Informative Mode Preview Banner when LiveKit env vars are not yet set */}
         {!health.livekitConfigured && (
           <div className="mb-10 flex flex-col justify-between gap-3 rounded-xl border border-slate-800 bg-[#131C2E] px-5 py-3.5 sm:flex-row sm:items-center">
@@ -132,12 +133,17 @@ export function LandingPage({
             </p>
 
             {/* Unboxed Metadata Line */}
-            <div className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-slate-400">
+            <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-slate-400">
               <span>Tanpa batas waktu sesi</span>
               <span aria-hidden="true">·</span>
               <span>Arsitektur LiveKit 10–50+ peserta</span>
               <span aria-hidden="true">·</span>
-              <span>Siap deploy GitHub ke Vercel</span>
+              <span>Kompatibel Laptop, Android & iOS</span>
+            </div>
+
+            {/* In-App PWA Install Action (Laptop, PC, Android, iPhone/iPad) */}
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <PWAInstallButton />
             </div>
 
             {/* Clean horizontal key facts */}
@@ -299,8 +305,8 @@ export function LandingPage({
         </section>
       </main>
 
-      <footer className="mt-12 border-t border-slate-800/70 py-6">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 text-xs text-slate-500 sm:flex-row">
+      <footer className="pb-safe mt-12 border-t border-slate-800/70 py-6">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 text-xs text-slate-500 sm:flex-row sm:px-6">
           <span>ObeeMeet · by obeecreatives</span>
           <span>Ruang video meeting pelatihan online berbasis LiveKit</span>
         </div>
