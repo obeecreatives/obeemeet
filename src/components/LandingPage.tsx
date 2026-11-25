@@ -76,13 +76,6 @@ export function LandingPage({
             <a href="#fitur-pelatihan" className="transition-colors hover:text-slate-100 whitespace-nowrap shrink-0">
               Fitur Pelatihan
             </a>
-            <button
-              type="button"
-              onClick={onOpenSetupGuide}
-              className="transition-colors hover:text-slate-100 whitespace-nowrap shrink-0"
-            >
-              Panduan Deploy
-            </button>
           </nav>
 
           <div className="flex items-center shrink-0">
@@ -305,8 +298,8 @@ export function LandingPage({
         </section>
       </main>
 
-      <footer className="pb-safe mt-12 border-t border-slate-800/70 py-6">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 text-center text-xs text-slate-500 sm:flex-row sm:px-6 sm:text-left">
+      <footer className="pb-safe mt-6 border-t border-slate-800/70">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-8 text-center text-xs text-slate-400 sm:flex-row sm:px-6 sm:py-10 sm:text-left">
           <span>ObeeMeet · by obeecreatives · Developed by Lalu Mahendra</span>
           <span>Ruang video meeting pelatihan online berbasis LiveKit</span>
         </div>

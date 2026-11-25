@@ -203,7 +203,7 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-[#0B1120] text-slate-100">
       {/* TOP BAR: Room Info, Lock Status, Preview Indicator, Elapsed Timer & Invite */}
-      <header className="pt-safe px-safe landscape-compact-header flex h-14 shrink-0 items-center justify-between gap-2 border-b border-slate-800/90 bg-[#0F172A] px-3 sm:gap-3 sm:px-5">
+      <header className="pt-safe landscape-compact-header flex min-h-14 shrink-0 items-center justify-between gap-2 border-b border-slate-800/90 bg-[#0F172A] pl-[max(0.75rem,env(safe-area-inset-left,0px))] pr-[max(0.75rem,env(safe-area-inset-right,0px))] sm:gap-3 sm:pl-[max(1.25rem,env(safe-area-inset-left,0px))] sm:pr-[max(1.25rem,env(safe-area-inset-right,0px))]">
         <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-600 text-white">
             <Video className="h-4 w-4" />
@@ -492,8 +492,8 @@ export function MeetingRoom({ session, onExitRoom, onOpenSetupGuide }: MeetingRo
       </div>
 
       {/* BOTTOM CONTROL BAR: Auto-tidy, touch-friendly (>= 44px), safe-area & zero overlap on 360px phones */}
-      <footer className="pb-safe px-safe landscape-compact-footer relative z-30 shrink-0 border-t border-slate-800/90 bg-[#0F172A] px-2 py-2 sm:px-5 sm:py-2.5">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-1.5 sm:gap-2">
+      <footer className="pb-safe px-safe landscape-compact-footer relative z-30 shrink-0 border-t border-slate-800/90 bg-[#0F172A]">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-1.5 px-2 py-2 sm:gap-2 sm:px-5 sm:py-2.5">
           {/* Left: Primary Media Controls */}
           <div className="flex items-center gap-1.5 sm:gap-2">
             <button

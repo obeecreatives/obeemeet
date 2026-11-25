@@ -28,19 +28,19 @@
 }
 
 /* iOS Notch / Dynamic Island / Home Indicator Safe Area utilities */
-.pt-safe {
+@utility pt-safe {
   padding-top: env(safe-area-inset-top, 0px);
 }
-.pb-safe {
+@utility pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
-.pl-safe {
+@utility pl-safe {
   padding-left: env(safe-area-inset-left, 0px);
 }
-.pr-safe {
+@utility pr-safe {
   padding-right: env(safe-area-inset-right, 0px);
 }
-.px-safe {
+@utility px-safe {
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
 }

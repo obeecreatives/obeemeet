@@ -144,8 +144,8 @@ export function PreJoinLobby({
 
   return (
     <div className="min-h-dvh bg-[#0B1120] text-slate-100">
-      <header className="pt-safe border-b border-slate-800/80 px-4 py-3.5 sm:px-6 sm:py-4">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 sm:gap-4">
+      <header className="pt-safe border-b border-slate-800/80">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3.5 sm:gap-4 sm:px-6 sm:py-4">
           <div className="flex items-center gap-4">
             <button
               type="button"
@@ -177,7 +177,7 @@ export function PreJoinLobby({
         </div>
       </header>
 
-      <main className="pb-safe mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8 lg:py-12">
+      <main className="mx-auto max-w-5xl px-4 pt-6 pb-[calc(2rem+env(safe-area-inset-bottom,0px))] sm:px-6 sm:pt-8 sm:pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))] lg:pt-12 lg:pb-[calc(3rem+env(safe-area-inset-bottom,0px))]">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-12 md:items-start lg:gap-8">
           {/* Left: Camera Preview & Device Checks */}
           <div className="space-y-4 md:col-span-7">
